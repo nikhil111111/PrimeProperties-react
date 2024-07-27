@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import OAuth from "../components/OAuth";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function SignUp() {
@@ -12,26 +21,38 @@ export default function SignUp() {
     });
     const { name, email, password } = formData;
     const navigate = useNavigate();
-
     function onChange(e) {
         setFormData((prevState) => ({
             ...prevState,
             [e.target.id]: e.target.value,
         }));
     }
-
     async function onSubmit(e) {
         e.preventDefault();
+
         try {
-            // Mock sign up logic here
-            // Simulate user sign up
+            const auth = getAuth();
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            updateProfile(auth.currentUser, {
+                displayName: name,
+            });
+            const user = userCredential.user;
+            const formDataCopy = { ...formData };
+            delete formDataCopy.password;
+            formDataCopy.timestamp = serverTimestamp();
+
+            await setDoc(doc(db, "users", user.uid), formDataCopy);
             toast.success("Sign up was successful");
             navigate("/");
         } catch (error) {
             toast.error("Something went wrong with the registration");
         }
     }
-
     return (
         <section>
             <h1 className="text-3xl text-center mt-6 font-bold">Sign Up</h1>
@@ -84,7 +105,7 @@ export default function SignUp() {
                         </div>
                         <div className="flex justify-between whitespace-nowrap text-sm sm:text-lg">
                             <p className="mb-6">
-                                Have an account?
+                                Have a account?
                                 <Link
                                     to="/sign-in"
                                     className="text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1"
@@ -107,6 +128,10 @@ export default function SignUp() {
                         >
                             Sign up
                         </button>
+                        <div className="flex items-center  my-4 before:border-t before:flex-1 before:border-gray-300 after:border-t after:flex-1 after:border-gray-300">
+                            <p className="text-center font-semibold mx-4">OR</p>
+                        </div>
+                        <OAuth />
                     </form>
                 </div>
             </div>
