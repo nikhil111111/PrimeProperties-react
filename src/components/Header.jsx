@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 export default function Header() {
-    // to make header dynamic we r created 1 hook i.e pageState
     const [pageState, setPageState] = useState("Sign in");
     const location = useLocation();
     const navigate = useNavigate();
-    // to change the pageState dynamically *******
     const auth = getAuth();
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -36,14 +34,14 @@ export default function Header() {
                 <div>
                     <ul className="flex space-x-10">
                         <li
-                            className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${pathMatchRoute("/") && "text-black border-b-blue-500"
+                            className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${pathMatchRoute("/") && "text-black border-b-red-500"
                                 }`}
                             onClick={() => navigate("/")}
                         >
                             Home
                         </li>
                         <li
-                            className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${pathMatchRoute("/offers") && "text-black border-b-blue-500"
+                            className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${pathMatchRoute("/offers") && "text-black border-b-red-500"
                                 }`}
                             onClick={() => navigate("/offers")}
                         >
@@ -51,11 +49,10 @@ export default function Header() {
                         </li>
                         <li
                             className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${(pathMatchRoute("/sign-in") || pathMatchRoute("/profile")) &&
-                                "text-black border-b-blue-500"}`}
-                            // if the person is authenticated go to profile page
+                                "text-black border-b-red-500"
+                                }`}
                             onClick={() => navigate("/profile")}
                         >
-                            {/* the below pageState used to show sign-in word dynamically on header */}
                             {pageState}
                         </li>
                     </ul>

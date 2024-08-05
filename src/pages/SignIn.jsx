@@ -14,7 +14,10 @@ export default function SignIn() {
     const { email, password } = formData;
     const navigate = useNavigate();
     function onChange(e) {
-        setFormData((prevState) => ({ ...prevState, [e.target.id]: e.target.value }));
+        setFormData((prevState) => ({
+            ...prevState,
+            [e.target.id]: e.target.value,
+        }));
     }
     async function onSubmit(e) {
         e.preventDefault();
